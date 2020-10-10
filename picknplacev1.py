@@ -78,7 +78,7 @@ model_number = len(poses)
 print'Now we have ' + str(model_number) + ' objects.'
 
 # move each cube
-cube_number = model_number - 3;
+cube_number = model_number - 3
 for i in range(cube_number):
     #To get the postion of cube since the previous 2 models are desk and robot
     start_idx = 2 + i
