@@ -75,19 +75,19 @@ models = rospy.wait_for_message('/gazebo/model_states',ModelStates)
 poses = models.pose
 model_number = len(poses)
 # We want to see how many models in our application
-print'Now we have' + str(model_number) + ' objects.'
+print'Now we have ' + str(model_number) + ' objects.'
 
 # move each cube
 cube_number = model_number - 3;
 for i in range(cube_number):
     #To get the postion of cube since the previous 2 models are desk and robot
-    start_idx = i + 2;
-    orientation = poses[start_idx].orientation
-    position = poses[start_idx].position
+    start_idx = 2 + i
+    ori = poses[start_idx].orientation
+    pos = poses[start_idx].position
     print'orientation is: '
-    print(orientation)
+    print(ori)
     print'position is: '
-    print(position)
+    print(pos)
 
     #To get the position of bucket which is the target position in our application
     bucket_pose = poses[model_number-1]
@@ -99,8 +99,8 @@ for i in range(cube_number):
     print'Firstly, move the robot to the top of the cube'
     pose_goal = group.get_current_pose().pose
     pose_goal.orientation = geometry_msgs.msg.Quaternion(*tf_conversions.transformations.quaternion_from_euler(0,-math.pi/2, 0))
-    pose_goal.position.x = position.x
-    pose_goal.position.y = position.y
+    pose_goal.position.x = pos.x
+    pose_goal.position.y = pos.y
     pose_goal.position.z = 1
     group.set_pose_target(pose_goal)
     plan1 = group.plan()
@@ -116,8 +116,8 @@ for i in range(cube_number):
     print'Thirdly, move manipulator downward and approach the cube'
     pose_goal = group.get_current_pose().pose
     pose_goal.orientation = geometry_msgs.msg.Quaternion(*tf_conversions.transformations.quaternion_from_euler(0, -math.pi/2, 0))
-    pose_goal.position.x = position.x
-    pose_goal.position.y = position.y
+    pose_goal.position.x = pos.x
+    pose_goal.position.y = pos.y
     pose_goal.position.z = 0.95
     group.set_pose_target(pose_goal)
     plan2 = group.plan()
@@ -133,12 +133,12 @@ for i in range(cube_number):
     #5.step5: raise the manipulator
     print'Raise the manipulator'
     pose_goal = group.get_current_pose().pose
-    pose_goal.orientation=geometry_msgs.msg.Quaternion(*tf_conversions.transformations.quaternion_from_euler(0, -math.pi/2, 0))
-    pose_goal.position.x = position.x
-    pose_goal.position.y = position.y
+    pose_goal.orientation = geometry_msgs.msg.Quaternion(*tf_conversions.transformations.quaternion_from_euler(0, -math.pi/2, 0))
+    pose_goal.position.x = pos.x
+    pose_goal.position.y = pos.y
     pose_goal.position.z = 1.25
     group.set_pose_target(pose_goal)
-    plan2 = group.plan()
+    plan3 = group.plan()
     group.go(wait=True)
     group.stop()
     rospy.sleep(1)
@@ -151,7 +151,7 @@ for i in range(cube_number):
     pose_goal.position.y = bucket_position.y
     pose_goal.position.z = 1.35
     group.set_pose_target(pose_goal)
-    plan3 = group.plan()
+    plan4 = group.plan()
     group.go(wait=True)
     group.stop()
     rospy.sleep(1)
@@ -159,3 +159,6 @@ for i in range(cube_number):
     #7.step7: release the cube
     print'Release the cube'
     open()
+    rospy.sleep(1)
+
+group.stop()
